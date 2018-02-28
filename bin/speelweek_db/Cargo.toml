@@ -1,0 +1,26 @@
+[package]
+name = "core"
+version = "0.1.0"
+workspace = "../../"
+authors = ["Johan Govers <johan@otherweb.eu>"]
+
+[dependencies]
+rocket = "0.3.6"
+rocket_codegen = "0.3.6"
+serde = "1.0"
+serde_json = "1.0"
+serde_derive = "1.0"
+diesel = { version = "1.1", features = ["mysql", "r2d2", "chrono", "large-tables"] }
+diesel_infer_schema = { version = "1.1", features = ["mysql"] }
+dotenv = "0.10"
+chrono = { version = "0.4.0", features = ["serde"] } # Date and time handling
+db = {path = "../../lib/db"}
+
+[dev-dependencies]
+parking_lot = {version = "0.5", features = ["nightly"]}
+rand = "0.4"
+
+[dependencies.rocket_contrib]
+version = "0.3.6"
+default_features = false
+features = [ "tera_templates" ]

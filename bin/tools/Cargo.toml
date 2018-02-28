@@ -1,0 +1,13 @@
+[package]
+name = "tools"
+version = "0.0.0"
+workspace = "../../"
+authors = ["Johan Govers <johan@otherweb.eu>"]
+
+[dependencies]
+db = {path = "../../lib/db"}
+diesel = { version = "1.1", features = ["mysql", "r2d2", "chrono", "large-tables"] }
+serde = "1.0"
+serde_json = "1.0"
+serde_derive = "1.0"
+chrono = { version = "0.4.0", features = ["serde"] } # Date and time handling

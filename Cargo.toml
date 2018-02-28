@@ -1,0 +1,13 @@
+# Root cargo.toml
+# https://github.com/rust-lang/rfcs/blob/master/text/1525-cargo-workspace.md
+#
+[workspace]
+members = [
+    "bin/speelweek_db",
+    "bin/tools",
+    "lib/db"
+]
+
+[profile.release]
+lto   = true
+debug = true
