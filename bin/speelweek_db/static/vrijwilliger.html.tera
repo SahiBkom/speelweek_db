@@ -1,0 +1,114 @@
+{% extends "base" %}
+{% block container %}
+
+
+<!-- head>
+    <title>FANTA-online</title>
+    <meta charset="utf-8">
+    </meta>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    </meta>
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    </meta>
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    </link>
+    <link rel="stylesheet" href="/css/checkboxes.css">
+    </link>
+    <link rel="stylesheet" href="/bootstrap/datepicker/css/bootstrap-datepicker3.min.css">
+    </link>
+    <link rel="stylesheet" href="/bootstrap/validator/css/bootstrapValidator.min.css">
+    </link><script src="/js/jquery-3.1.1.min.js"></script><script src="/jQuery/jquery.serialize-object.min.js"></script><script src="/jQuery/form/jquery.form.min.js"></script><script src="/bootstrap/datepicker/js/bootstrap-datepicker.min.js"></script><script src="/bootstrap/datepicker/locales/bootstrap-datepicker.nl.min.js" charset="utf-8"></script><script src="/bootstrap/validator/js/bootstrapValidator.min.js"></script>
+<head -->
+
+
+    <form method="post" action="/vrijwilliger" id="form_year">
+        <h3>Beschikbaarheid</h3>
+        <p class="text-justify">Geef aan op welke dagdelen je beschikbaar bent en op welke dagen je mee eet en/of blijft slapen.</p>
+        <table class="table">
+            <thead>
+            <th></th>
+            <th></th>
+            <th class="text-center">Ochtend</th>
+            <th class="text-center">Middag</th>
+            <th class="text-center">Avond</th>
+            <th class="text-center">Eten</th>
+            <th class="text-center">Slapen</th>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <div class="row">
+            <div class="col-md-4">
+                <fieldset>
+                    <legend>Kwalificaties</legend>
+                    <p class="text-justify">Geef aan over welke kwalificaties je beschikt.<br><i>VOG en gedragscode wordt door ons gevuld.</i></p>
+                    <div class="checkbox"><input name="kwalificatieAll[]" value="1" type="hidden"><input id="kwalificatie_1" name="kwalificatie[]" value="1" type="checkbox" disabled=""><label for="kwalificatie_1">Verklaring omtrent het gedrag (VOG)</label></div>
+                    <div class="checkbox"><input name="kwalificatieAll[]" value="2" type="hidden"><input id="kwalificatie_2" name="kwalificatie[]" value="2" type="checkbox" disabled=""><label for="kwalificatie_2">Gedragscode</label></div>
+                    <div class="checkbox"><input name="kwalificatieAll[]" value="3" type="hidden"><input id="kwalificatie_3" name="kwalificatie[]" value="3" type="checkbox"><label for="kwalificatie_3">Eerste hulp bij ongevallen (EHBO)</label></div>
+                    <div class="checkbox"><input name="kwalificatieAll[]" value="4" type="hidden"><input id="kwalificatie_4" name="kwalificatie[]" value="4" type="checkbox"><label for="kwalificatie_4">Bedrijfshulpverlening (BHV)</label></div>
+                    <div class="checkbox"><input name="kwalificatieAll[]" value="5" type="hidden"><input id="kwalificatie_5" name="kwalificatie[]" value="5" type="checkbox"><label for="kwalificatie_5">Automatische externe defibrillator (AED)</label></div>
+                    <div class="checkbox"><input name="kwalificatieAll[]" value="6" type="hidden"><input id="kwalificatie_6" name="kwalificatie[]" value="6" type="checkbox"><label for="kwalificatie_6">Sociale Hygiëne (SHV)</label></div>
+                    <div class="checkbox"><input name="kwalificatieAll[]" value="7" type="hidden"><input id="kwalificatie_7" name="kwalificatie[]" value="7" type="checkbox"><label for="kwalificatie_7">Certificaat Verantwoord Alcohol Schenken (SVI)</label></div>
+                    <div class="checkbox"><input name="kwalificatieAll[]" value="8" type="hidden"><input id="kwalificatie_8" name="kwalificatie[]" value="8" type="checkbox"><label for="kwalificatie_8">Rijbewijs BE</label></div>
+                    <div class="checkbox"><input name="kwalificatieAll[]" value="9" type="hidden"><input id="kwalificatie_9" name="kwalificatie[]" value="9" type="checkbox"><label for="kwalificatie_9">Heftruck certifiaat</label></div>
+                </fieldset>
+            </div>
+            <div class="col-md-4">
+                <fieldset>
+                    <legend>Middagprogramma</legend>
+                    <p class="text-justify">Geef aan op welk middagonderdeel je ingezet wilt worden. We houden zoveel mogelijk rekening met je voorkeur. Je kunt echter, afhankelijk van de bezetting op het onderdeel van jouw voorkeur, ook op een ander onderdeel worden ingezet.<br><i>Je mag meerdere onderdelen aanvinken.</i></p>
+                    <div class="checkbox"><input name="middagprogrammaAll[]" value="1" type="hidden"><input id="middagprogramma_1" name="middagprogramma[]" value="1" type="checkbox"><label for="middagprogramma_1">baktent </label></div>
+                    <div class="checkbox"><input name="middagprogrammaAll[]" value="4" type="hidden"><input id="middagprogramma_4" name="middagprogramma[]" value="4" type="checkbox"><label for="middagprogramma_4">beurs </label></div>
+                    <div class="checkbox"><input name="middagprogrammaAll[]" value="5" type="hidden"><input id="middagprogramma_5" name="middagprogramma[]" value="5" type="checkbox"><label for="middagprogramma_5">casino </label></div>
+                    <div class="checkbox"><input name="middagprogrammaAll[]" value="10" type="hidden"><input id="middagprogramma_10" name="middagprogramma[]" value="10" type="checkbox"><label for="middagprogramma_10">crea </label></div>
+                    <div class="checkbox"><input name="middagprogrammaAll[]" value="12" type="hidden"><input id="middagprogramma_12" name="middagprogramma[]" value="12" type="checkbox"><label for="middagprogramma_12">EHBO </label></div>
+                    <div class="checkbox"><input name="middagprogrammaAll[]" value="13" type="hidden"><input id="middagprogramma_13" name="middagprogramma[]" value="13" type="checkbox"><label for="middagprogramma_13">FANTA-kermis </label></div>
+                    <div class="checkbox"><input name="middagprogrammaAll[]" value="6" type="hidden"><input id="middagprogramma_6" name="middagprogramma[]" value="6" type="checkbox"><label for="middagprogramma_6">FANTA-krant </label></div>
+                    <div class="checkbox"><input name="middagprogrammaAll[]" value="15" type="hidden"><input id="middagprogramma_15" name="middagprogramma[]" value="15" type="checkbox"><label for="middagprogramma_15">FLEX-pool (limobar / filmtent / skelterbaan / leestent)</label></div>
+                    <div class="checkbox"><input name="middagprogrammaAll[]" value="18" type="hidden"><input id="middagprogramma_18" name="middagprogramma[]" value="18" type="checkbox"><label for="middagprogramma_18">huttenbouw </label></div>
+                    <div class="checkbox"><input name="middagprogrammaAll[]" value="21" type="hidden"><input id="middagprogramma_21" name="middagprogramma[]" value="21" type="checkbox"><label for="middagprogramma_21">kabelbaan & klimwand </label></div>
+                    <div class="checkbox"><input name="middagprogrammaAll[]" value="22" type="hidden"><input id="middagprogramma_22" name="middagprogramma[]" value="22" type="checkbox"><label for="middagprogramma_22">laboratorium (proefjes)</label></div>
+                    <div class="checkbox"><input name="middagprogrammaAll[]" value="7" type="hidden"><input id="middagprogramma_7" name="middagprogramma[]" value="7" type="checkbox"><label for="middagprogramma_7">muziektent </label></div>
+                    <div class="checkbox"><input name="middagprogrammaAll[]" value="27" type="hidden"><input id="middagprogramma_27" name="middagprogramma[]" value="27" type="checkbox"><label for="middagprogramma_27">outdoor </label></div>
+                    <div class="checkbox"><input name="middagprogrammaAll[]" value="31" type="hidden"><input id="middagprogramma_31" name="middagprogramma[]" value="31" type="checkbox"><label for="middagprogramma_31">podiumprogramma </label></div>
+                    <div class="checkbox"><input name="middagprogrammaAll[]" value="29" type="hidden"><input id="middagprogramma_29" name="middagprogramma[]" value="29" type="checkbox"><label for="middagprogramma_29">postkantoor </label></div>
+                    <div class="checkbox"><input name="middagprogrammaAll[]" value="32" type="hidden"><input id="middagprogramma_32" name="middagprogramma[]" value="32" type="checkbox"><label for="middagprogramma_32">schoonheidssalon (schmink)</label></div>
+                    <div class="checkbox"><input name="middagprogrammaAll[]" value="38" type="hidden"><input id="middagprogramma_38" name="middagprogramma[]" value="38" type="checkbox"><label for="middagprogramma_38">water & fun (waterprogramma / springkussens / trampolines)</label></div>
+                </fieldset>
+            </div>
+            <div class="col-md-4">
+                <fieldset>
+                    <legend>Voorbereiding</legend>
+                    <p class="text-justify">Helpen in een van de kernteams met de voorbereiding? Geef dan hieronder je voorkeur aan en we nemen zo snel mogelijk contact met je op.<br><i>Je mag meerdere kernteams aanvinken.</i></p>
+                    <div class="checkbox"><input name="voorbereidingAll[]" value="1" type="hidden"><input id="voorbereiding_1" name="voorbereiding[]" value="1" type="checkbox"><label for="voorbereiding_1">baktent </label></div>
+                    <div class="checkbox"><input name="voorbereidingAll[]" value="4" type="hidden"><input id="voorbereiding_4" name="voorbereiding[]" value="4" type="checkbox"><label for="voorbereiding_4">beurs </label></div>
+                    <div class="checkbox"><input name="voorbereidingAll[]" value="5" type="hidden"><input id="voorbereiding_5" name="voorbereiding[]" value="5" type="checkbox"><label for="voorbereiding_5">casino </label></div>
+                    <div class="checkbox"><input name="voorbereidingAll[]" value="9" type="hidden"><input id="voorbereiding_9" name="voorbereiding[]" value="9" type="checkbox"><label for="voorbereiding_9">communicatie </label></div>
+                    <div class="checkbox"><input name="voorbereidingAll[]" value="10" type="hidden"><input id="voorbereiding_10" name="voorbereiding[]" value="10" type="checkbox"><label for="voorbereiding_10">crea </label></div>
+                    <div class="checkbox"><input name="voorbereidingAll[]" value="3" type="hidden"><input id="voorbereiding_3" name="voorbereiding[]" value="3" type="checkbox"><label for="voorbereiding_3">decor </label></div>
+                    <div class="checkbox"><input name="voorbereidingAll[]" value="13" type="hidden"><input id="voorbereiding_13" name="voorbereiding[]" value="13" type="checkbox"><label for="voorbereiding_13">FANTA-kermis </label></div>
+                    <div class="checkbox"><input name="voorbereidingAll[]" value="6" type="hidden"><input id="voorbereiding_6" name="voorbereiding[]" value="6" type="checkbox"><label for="voorbereiding_6">FANTA-krant </label></div>
+                    <div class="checkbox"><input name="voorbereidingAll[]" value="15" type="hidden"><input id="voorbereiding_15" name="voorbereiding[]" value="15" type="checkbox"><label for="voorbereiding_15">FLEX-pool (limobar / filmtent / skelterbaan / leestent)</label></div>
+                    <div class="checkbox"><input name="voorbereidingAll[]" value="17" type="hidden"><input id="voorbereiding_17" name="voorbereiding[]" value="17" type="checkbox"><label for="voorbereiding_17">fotostudio </label></div>
+                    <div class="checkbox"><input name="voorbereidingAll[]" value="20" type="hidden"><input id="voorbereiding_20" name="voorbereiding[]" value="20" type="checkbox"><label for="voorbereiding_20">infra </label></div>
+                    <div class="checkbox"><input name="voorbereidingAll[]" value="22" type="hidden"><input id="voorbereiding_22" name="voorbereiding[]" value="22" type="checkbox"><label for="voorbereiding_22">laboratorium (proefjes)</label></div>
+                    <div class="checkbox"><input name="voorbereidingAll[]" value="24" type="hidden"><input id="voorbereiding_24" name="voorbereiding[]" value="24" type="checkbox"><label for="voorbereiding_24">logistiek </label></div>
+                    <div class="checkbox"><input name="voorbereidingAll[]" value="7" type="hidden"><input id="voorbereiding_7" name="voorbereiding[]" value="7" type="checkbox"><label for="voorbereiding_7">muziektent </label></div>
+                    <div class="checkbox"><input name="voorbereidingAll[]" value="28" type="hidden"><input id="voorbereiding_28" name="voorbereiding[]" value="28" type="checkbox"><label for="voorbereiding_28">ontwikkeling (nieuwe onderdelen)</label></div>
+                    <div class="checkbox"><input name="voorbereidingAll[]" value="27" type="hidden"><input id="voorbereiding_27" name="voorbereiding[]" value="27" type="checkbox"><label for="voorbereiding_27">outdoor </label></div>
+                    <div class="checkbox"><input name="voorbereidingAll[]" value="31" type="hidden"><input id="voorbereiding_31" name="voorbereiding[]" value="31" type="checkbox"><label for="voorbereiding_31">podiumprogramma </label></div>
+                    <div class="checkbox"><input name="voorbereidingAll[]" value="29" type="hidden"><input id="voorbereiding_29" name="voorbereiding[]" value="29" type="checkbox"><label for="voorbereiding_29">postkantoor </label></div>
+                    <div class="checkbox"><input name="voorbereidingAll[]" value="30" type="hidden"><input id="voorbereiding_30" name="voorbereiding[]" value="30" type="checkbox"><label for="voorbereiding_30">programma (ochtendprogramma)</label></div>
+                    <div class="checkbox"><input name="voorbereidingAll[]" value="34" type="hidden"><input id="voorbereiding_34" name="voorbereiding[]" value="34" type="checkbox"><label for="voorbereiding_34">sponsorcommissie </label></div>
+                    <div class="checkbox"><input name="voorbereidingAll[]" value="35" type="hidden"><input id="voorbereiding_35" name="voorbereiding[]" value="35" type="checkbox"><label for="voorbereiding_35">thema </label></div>
+                    <div class="checkbox"><input name="voorbereidingAll[]" value="36" type="hidden"><input id="voorbereiding_36" name="voorbereiding[]" value="36" type="checkbox"><label for="voorbereiding_36">veiligheid </label></div>
+                    <div class="checkbox"><input name="voorbereidingAll[]" value="38" type="hidden"><input id="voorbereiding_38" name="voorbereiding[]" value="38" type="checkbox"><label for="voorbereiding_38">water & fun (waterprogramma / springkussens / trampolines)</label></div>
+                </fieldset>
+            </div>
+        </div>
+        <button class="btn btn-primary pull-right" type="submit">Opslaan</button>
+    </form>
+
+
+
+
+{% endblock container %}

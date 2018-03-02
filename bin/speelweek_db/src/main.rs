@@ -23,7 +23,7 @@ use rocket_contrib::Template;
 use dotenv::dotenv;
 use db::task::Task;
 use page::user_page;
-
+use db::User;
 
 #[derive(FromForm)]
 pub struct Todo {
@@ -45,7 +45,7 @@ impl<'a, 'b> ContextMsg<'a, 'b> {
 }
 
 #[post("/", data = "<todo_form>")]
-fn new(todo_form: Form<Todo>, conn: db::Conn, user: login::UserId) -> Flash<Redirect> {
+fn new(todo_form: Form<Todo>, conn: db::Conn, user: db::user::UserId) -> Flash<Redirect> {
     let todo = todo_form.into_inner();
     if todo.description.is_empty() {
         Flash::error(Redirect::to("/"), "Description cannot be empty.")
@@ -57,7 +57,7 @@ fn new(todo_form: Form<Todo>, conn: db::Conn, user: login::UserId) -> Flash<Redi
 }
 
 #[put("/<id>")]
-fn toggle(id: i32, conn: db::Conn, user: login::UserId) -> Result<Redirect, Template> {
+fn toggle(id: i32, conn: db::Conn, user: db::user::UserId) -> Result<Redirect, Template> {
     if Task::toggle_with_id(id, &conn) {
         Ok(Redirect::to("/"))
     } else {
@@ -66,7 +66,7 @@ fn toggle(id: i32, conn: db::Conn, user: login::UserId) -> Result<Redirect, Temp
 }
 
 #[delete("/<id>")]
-fn delete(id: i32, conn: db::Conn, user: login::UserId) -> Result<Flash<Redirect>, Template> {
+fn delete(id: i32, conn: db::Conn, user: db::user::UserId) -> Result<Flash<Redirect>, Template> {
     if Task::delete_with_id(id, &conn) {
         Ok(Flash::success(Redirect::to("/"), "Todo was deleted."))
     } else {
@@ -76,7 +76,7 @@ fn delete(id: i32, conn: db::Conn, user: login::UserId) -> Result<Flash<Redirect
 
 
 #[get("/", rank = 2)]
-fn index(msg: Option<FlashMessage>, conn: db::Conn, user: login::UserId) -> Template {
+fn index(msg: Option<FlashMessage>, conn: db::Conn, user: db::user::UserId) -> Template {
     println!("test 3");
     Template::render("index", &match msg {
         Some(ref msg) => ContextMsg::raw(&conn, Some((msg.name(), msg.msg()))),
@@ -99,6 +99,7 @@ fn rocket() -> (Rocket, Option<db::Conn>) {
         .mount("/todo/", routes![new, toggle, delete])
         .mount("/login/", routes![login::index, login::user_index, login::login, login::logout, login::login_user, login::login_page])
         .mount("/user/", routes![page::user_page::save, page::user_page::index])
+        .mount("/vrijwilliger/", routes![page::vrijwilliger_page::index, ])
         .attach(Template::fairing());
 
     (rocket, conn)

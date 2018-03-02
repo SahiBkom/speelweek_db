@@ -19,11 +19,11 @@
 <body>
 <nav class="navbar navbar-default">
     <div class="container-fluid">
-        <div class="navbar-header"><a class="navbar-brand" href="#">FANTA-online</a></div>
+        <div class="navbar-header"><a class="navbar-brand" href="/">FANTA-online</a></div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
                 <li><a href="/user">Mijn gegevens</a></li>
-                <li><a href="/2017">2017</a></li>
+                <li><a href="/vrijwilliger">Vrijwilliger</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="/login/logout">Uitloggen</a></li>

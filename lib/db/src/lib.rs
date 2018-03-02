@@ -14,6 +14,7 @@ extern crate rocket;
 pub mod schema;
 pub mod user;
 pub mod task;
+pub mod team;
 
 use diesel::prelude::*;
 use dotenv::dotenv;

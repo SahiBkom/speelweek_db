@@ -1,6 +1,38 @@
 table! {
+    tasks {
+        id -> Nullable<Integer>,
+        description -> Text,
+        completed -> Bool,
+
+    }
+}
+table! {
+    team (id) {
+        id -> Integer,
+        naam -> Varchar,
+        omschrijving -> Varchar,
+        voorbereiding -> Bool,
+        middagprogramma -> Bool,
+        created_at -> Datetime,
+        updated_at -> Datetime,
+    }
+}
+
+table! {
+    team_vrijwilliger (id) {
+        id -> Integer,
+        team_id -> Integer,
+        vrijwilliger_id -> Integer,
+        programma -> Bool,
+        voorbereiding -> Bool,
+        created_at -> Datetime,
+        updated_at -> Datetime,
+    }
+}
+
+table! {
     user (id) {
-        id -> Bigint,
+        id -> Integer,
         username -> Nullable<Varchar>,
         password -> Nullable<Varchar>,
         login_at -> Nullable<Datetime>,
@@ -24,11 +56,9 @@ table! {
     }
 }
 
-table! {
-    tasks {
-        id -> Nullable<Integer>,
-        description -> Text,
-        completed -> Bool,
-
-    }
-}
+allow_tables_to_appear_in_same_query!(
+    tasks,
+    team,
+    team_vrijwilliger,
+    user,
+);

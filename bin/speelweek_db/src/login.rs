@@ -13,21 +13,6 @@ struct Login {
     password: String
 }
 
-#[derive(Debug)]
-pub struct UserId(pub usize);
-
-impl<'a, 'r> FromRequest<'a, 'r> for UserId {
-    type Error = ();
-
-    fn from_request(request: &'a Request<'r>) -> request::Outcome<UserId, ()> {
-        request.cookies()
-            .get_private("user_id")
-            .and_then(|cookie| cookie.value().parse().ok())
-            .map(|id| UserId(id))
-            .or_forward(())
-    }
-}
-
 #[post("/", data = "<login>")]
 fn login(mut cookies: Cookies, login: Form<Login>, conn: db::Conn) -> Flash<Redirect> {
     match db::User::login(&conn, &login.get().username, &login.get().password) {
@@ -49,7 +34,7 @@ fn logout(mut cookies: Cookies) -> Flash<Redirect> {
 }
 
 #[get("/")]
-fn login_user(_user: UserId, conn: db::Conn) -> Redirect {
+fn login_user(_user: db::user::UserId, conn: db::Conn) -> Redirect {
     println!("login user");
     Redirect::to("/")
 }
@@ -66,10 +51,10 @@ fn login_page(flash: Option<FlashMessage>) -> Template {
 }
 
 #[get("/home")]
-fn user_index(user: UserId) -> Template {
+fn user_index(user: db::user::UserId) -> Template {
     println!("login user 3");
     let mut context = HashMap::new();
-    context.insert("user_id", user.0);
+    context.insert("user_id", user);
     Template::render("index", &context)
 }
 

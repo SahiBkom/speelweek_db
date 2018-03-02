@@ -1,10 +1,30 @@
-use diesel;
-use diesel::prelude::*;
-use diesel::MysqlConnection;
 use chrono::{NaiveDate, NaiveDateTime, Utc};
-use schema::user;
-use schema::user::dsl::{user as dsl_user};
+use diesel::MysqlConnection;
+use diesel::prelude::*;
+use diesel;
 use djangohashers::{make_password, check_password};
+use rocket::http::{Cookie, Cookies};
+use rocket::outcome::IntoOutcome;
+//use rocket::request::{Form, FromFormValue};
+use rocket::request::{self, Form, FromFormValue, FromRequest, Request};
+use rocket::response::Redirect;
+use schema::user::dsl::{user as dsl_user};
+use schema::user;
+
+#[derive(Serialize, Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone)]
+pub struct UserId(i32);
+
+impl<'a, 'r> FromRequest<'a, 'r> for UserId {
+    type Error = ();
+
+    fn from_request(request: &'a Request<'r>) -> request::Outcome<UserId, ()> {
+        request.cookies()
+            .get_private("user_id")
+            .and_then(|cookie| cookie.value().parse().ok())
+            .map(|id| UserId(id))
+            .or_forward(())
+    }
+}
 
 #[derive(Serialize, Debug, Clone, Copy)]
 pub enum Role {
@@ -40,7 +60,7 @@ impl Role {
 #[table_name="user"]
 #[derive(Serialize, Queryable, Insertable, Debug, Clone, AsChangeset)] //
 pub struct User {
-    pub id: i64,
+    pub id: i32,
     pub username: Option<String>,
     pub password: Option<String>,
     pub login_at: Option<NaiveDateTime>,
@@ -76,8 +96,8 @@ impl User {
         dsl_user.order(user::id.desc()).load::<User>(conn).unwrap()
     }
 
-    pub fn get_by_id(conn: &MysqlConnection, id: i64) -> User {
-        dsl_user.find(id).first::<User>(conn).unwrap()
+    pub fn get_by_id(conn: &MysqlConnection, userId: UserId) -> User {
+        dsl_user.find(userId.0).first::<User>(conn).unwrap()
     }
 
 //    pub fn insert(todo: Todo, conn: &MysqlConnection) -> bool {
@@ -97,8 +117,8 @@ impl User {
 //    }
 
 
-    pub fn update_login_time(conn: &MysqlConnection, id_in: i64) -> bool {
-        let sql = diesel::update(dsl_user.filter(user::id.eq(id_in)))
+    pub fn update_login_time(conn: &MysqlConnection, userId: UserId) -> bool {
+        let sql = diesel::update(dsl_user.filter(user::id.eq(userId.0)))
             .set(user::login_at.eq(Some(Utc::now().naive_utc()))).execute(conn);
 
         match sql {
@@ -120,7 +140,7 @@ impl User {
         }
     }
 
-    pub fn delete_with_id(id: i64, conn: &MysqlConnection) -> bool {
+    pub fn delete_with_id(id: i32, conn: &MysqlConnection) -> bool {
         diesel::delete(dsl_user.find(id)).execute(conn).is_ok()
     }
 
@@ -158,7 +178,7 @@ impl User {
         for r in results {
             match check_password(password_in, &r.password.clone().unwrap_or("".to_string())) {
                 Ok(valid) => {
-                    User::update_login_time(conn, r.id);
+                    User::update_login_time(conn, UserId(r.id));
                     return Some(r);
                 },
                 Err(error) => {

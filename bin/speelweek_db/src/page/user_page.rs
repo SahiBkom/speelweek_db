@@ -154,13 +154,13 @@ struct UserForm<'r> {
 fn save<'a>(
     conn: db::Conn,
     user_id:
-    login::UserId,
+    db::user::UserId,
     user_form:Form<'a, UserForm<'a>>
 ) -> String {
 
     let user_form = user_form.get();
 
-    let mut user = db::User::get_by_id(&conn, user_id.0 as i64);
+    let mut user = db::User::get_by_id(&conn, user_id);
 
     user.achternaam = Some(user_form.achternaam.url_decode().unwrap());
 //    user.e_mail_adres = user_form.e_mail_adres.0;
@@ -169,6 +169,8 @@ fn save<'a>(
     user.geboortedatum = user_form.geboortedatum.0;
     user.huisnummer = Some(user_form.huisnummer.url_decode().unwrap());
     user.mobiele_nummer = Some(user_form.mobiele_nummer.url_decode().unwrap());
+
+    //TODO: make change pasword
 //    pub password: Option<String>,
     user.postcode = Some(user_form.postcode.url_decode().unwrap());
     user.straatnaam = Some(user_form.straatnaam.url_decode().unwrap());
@@ -188,7 +190,7 @@ fn save<'a>(
 
 
 #[get("/", rank = 1)]
-fn index(conn: db::Conn, user: login::UserId) -> Template {
+fn index(conn: db::Conn, user: db::user::UserId) -> Template {
 
     #[derive(Debug, Serialize)]
     struct UserPageDate {
@@ -196,7 +198,7 @@ fn index(conn: db::Conn, user: login::UserId) -> Template {
     }
 
     println!("test {:?}", user);
-    let t = db::User::get_by_id(&conn,user.0 as i64);
+    let t = db::User::get_by_id(&conn,user);
 
     let data = UserPageDate { user : t,};
 
