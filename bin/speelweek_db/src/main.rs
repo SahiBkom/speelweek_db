@@ -9,11 +9,10 @@ extern crate rocket;
 extern crate rocket_contrib;
 extern crate chrono;
 extern crate dotenv;
-extern crate db as f_db;
+extern crate db;
 
 mod static_files;
 mod login;
-mod db;
 mod page;
 #[cfg(test)] mod tests;
 
@@ -22,7 +21,7 @@ use rocket::request::{Form, FlashMessage};
 use rocket::response::{Flash, Redirect};
 use rocket_contrib::Template;
 use dotenv::dotenv;
-use f_db::task::Task;
+use db::task::Task;
 use page::user_page;
 
 
@@ -75,22 +74,6 @@ fn delete(id: i32, conn: db::Conn, user: login::UserId) -> Result<Flash<Redirect
     }
 }
 
-#[get("/", rank = 1)]
-fn test(conn: db::Conn, user: login::UserId) -> Template {
-
-    #[derive(Debug, Serialize)]
-    struct UserPageDate {
-        user: f_db::User,
-    }
-
-    println!("test {:?}", user);
-    let t = f_db::User::get_by_id(&conn,user.0 as i64);
-
-    let data = UserPageDate { user : t,};
-
-    println!("test {:?}", data);
-    Template::render("index", data)
-}
 
 #[get("/", rank = 2)]
 fn index(msg: Option<FlashMessage>, conn: db::Conn, user: login::UserId) -> Template {
@@ -112,10 +95,10 @@ fn rocket() -> (Rocket, Option<db::Conn>) {
 
     let rocket = rocket::ignite()
         .manage(pool)
-        .mount("/", routes![index, static_files::all, test,])
+        .mount("/", routes![index, static_files::all])
         .mount("/todo/", routes![new, toggle, delete])
         .mount("/login/", routes![login::index, login::user_index, login::login, login::logout, login::login_user, login::login_page])
-        .mount("/user/", routes![page::user_page::save])
+        .mount("/user/", routes![page::user_page::save, page::user_page::index])
         .attach(Template::fairing());
 
     (rocket, conn)

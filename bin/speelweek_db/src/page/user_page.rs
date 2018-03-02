@@ -1,10 +1,9 @@
 use rocket::response::Redirect;
 use rocket::request::{Form, FromFormValue};
 use rocket::http::RawStr;
-
+use rocket_contrib::Template;
 use login;
 use db;
-use f_db;
 
 use chrono::NaiveDate;
 
@@ -161,10 +160,11 @@ fn save<'a>(
 
     let user_form = user_form.get();
 
-    let mut user = f_db::User::get_by_id(&conn, user_id.0 as i64);
+    let mut user = db::User::get_by_id(&conn, user_id.0 as i64);
 
     user.achternaam = Some(user_form.achternaam.url_decode().unwrap());
 //    user.e_mail_adres = user_form.e_mail_adres.0;
+    user.e_mail_adres = Some(user_form.e_mail_adres.url_decode().unwrap()); //TODO: Add email check
     user.e_mail_toestemming = Some(user_form.e_mail_toestemming.to_bool()); //TODO: Change to boolean remove some
     user.geboortedatum = user_form.geboortedatum.0;
     user.huisnummer = Some(user_form.huisnummer.url_decode().unwrap());
@@ -180,8 +180,26 @@ fn save<'a>(
     user.voornaam = Some(user_form.voornaam.url_decode().unwrap());
     user.woonplaats = Some(user_form.woonplaats.url_decode().unwrap());
 
-    println!("update:{:?}", f_db::User::update(&conn, &user));
+    println!("update:{:?}", db::User::update(&conn, &user));
 
     println!("Form resutl is {:?}\n{:?}", user, user_form);
     format!("Form resutl is {:?}", user)
+}
+
+
+#[get("/", rank = 1)]
+fn index(conn: db::Conn, user: login::UserId) -> Template {
+
+    #[derive(Debug, Serialize)]
+    struct UserPageDate {
+        user: db::User,
+    }
+
+    println!("test {:?}", user);
+    let t = db::User::get_by_id(&conn,user.0 as i64);
+
+    let data = UserPageDate { user : t,};
+
+    println!("test {:?}", data);
+    Template::render("user", data)
 }

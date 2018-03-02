@@ -1,111 +1,74 @@
-{% extends "base" %}
-{% block container %}
-    <form class="form-horizontal" id="vrijwilliger_form" method="post" action="/user/save">
-        <div class="form-group">
-            <div class="row">
-                <div class="col-sm-3"><label class="control-label col-md-12" for="voorletters">login</label></div>
-                <div class="col-sm-2"><input class="form-control" id="username" type="text" name="username" placeholder="username" value="{{user.username}}"></div>
-                <div class="col-sm-2"><input class="form-control" id="password_a" type="password" name="password_a" placeholder="password" value=""></div>
-                <div class="col-sm-2"><input class="form-control" id="password_b" type="password" name="password_b" placeholder="password" value=""></div>
-            </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Rocket Todo Example</title>
+  <meta name="description" content="A todo application written in Rocket.">
+  <meta name="author" content="Sergio Benitez">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/normalize.css">
+  <link rel="stylesheet" href="/css/skeleton.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" type="image/png" href="/images/favicon.png">
+</head>
+<body>
+  <div class="container">
+    <p><a href="/login">login</a> -
+      <form action="/login/logout" method="post" accept-charset="utf-8">
+        <input type="submit" name="logout" id="logout" value="logout" />
+      </form>
+    </p>
+    <p><!--Nothing to see here --></p>
+
+    <div class="row">
+      <h4>Rocket Todo</h4>
+      <form action="/todo" method="post">
+        <div class="ten columns">
+          <input type="text" placeholder="enter a task description..."
+            name="description" id="description" value="" autofocus
+            class="u-full-width {% if msg %}field-{{msg.0}}{% endif %}" />
+          {% if msg %}
+            <small class="field-{{msg.0}}-msg">
+               {{ msg.1 }}
+            </small>
+          {% endif %}
         </div>
-        <div class="form-group">
-            <div class="row">
-                <div class="col-sm-3"><label class="control-label col-md-12" for="voorletters">naam</label></div>
-                <div class="col-sm-2"><input class="form-control" id="voorletters" type="text" name="voorletters" placeholder="voorletters" value="{{user.voorletters}}"></div>
-                <div class="col-sm-2"><input class="form-control" id="voornaam" type="text" name="voornaam" placeholder="voor" value="{{user.voornaam}}"></div>
-                <div class="col-sm-2"><input class="form-control" id="tussenvoegsel" type="text" name="tussenvoegsel" placeholder="tussen" value="{{user.tussenvoegsel}}"></div>
-                <div class="col-sm-2"><input class="form-control" id="achternaam" type="text" name="achternaam" placeholder="achter" value="{{user.achternaam}}"></div>
-            </div>
+        <div class="two columns">
+          <input type="submit" value="add task">
         </div>
-        <div class="form-group">
-            <div class="row">
-                <div class="col-sm-3"><label class="control-label col-md-12" for="straatnaam">straat</label></div>
-                <div class="col-sm-4"><input class="form-control" id="straatnaam" type="text" name="straatnaam" placeholder="straatnaam" value="{{user.straatnaam}}"></div>
-                <div class="col-sm-2"><input class="form-control" id="huisnummer" type="text" name="huisnummer" placeholder="huisnummer" value="{{user.huisnummer}}"></div>
-                <div class="col-sm-2"><input class="form-control" id="toevoeging_huisnummer" type="text" name="toevoeging_huisnummer" placeholder="toevoeging" value="{{user.toevoeging_huisnummer}}"></div>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="row">
-                <div class="col-sm-3"><label class="control-label col-md-12" for="postcode">plaats</label></div>
-                <div class="col-sm-4"><input class="form-control" id="postcode" type="text" name="postcode" placeholder="postcode" value="{{user.postcode}}"></div>
-                <div class="col-sm-4"><input class="form-control" id="woonplaats" type="text" name="woonplaats" placeholder="woonplaats" value="{{user.woonplaats}}"></div>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="row">
-                <div class="col-sm-3"><label class="control-label col-md-12" for="mobiele_nummer">telefoon</label></div>
-                <div class="col-sm-4"><input class="form-control" id="mobiele_nummer" type="text" name="mobiele_nummer" placeholder="mobiel" value="{{user.mobiele_nummer}}"></div>
-                <div class="col-sm-4"><input class="form-control" id="telefoon_nummer" type="text" name="telefoon_nummer" placeholder="vast" value="{{user.telefoon_nummer}}"></div>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="row">
-                <div class="col-sm-3"><label class="control-label col-md-12" for="e_mail_adres">e-mail</label></div>
-                <div class="col-sm-4"><input class="form-control" id="e_mail_adres" type="text" name="e_mail_adres" placeholder="e-mail" value="{{user.e_mail_adres}}"></div>
-                <div class="col-sm-4">
-                    <div class="input-group">
-                        <span class="input-group-addon">
-                            <input type="checkbox" name="e_mail_toestemming" id="e_mail_toestemming" checked="{{user.e_mail_toestemming}}">
-                        </span>
-                        <label class="form-control" for="e_mail_toestemming">Ik wil de nieuwsbrieven ontvangen</label>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="row">
-                <div class="col-sm-3"><label class="control-label col-md-12" for="geboortedatum">geboortedatum, geslacht</label></div>
-                <div class="col-sm-4 date">
-                    <div class="input-group date">
-                        <input class="form-control" id="geboortedatum" name="geboortedatum" type="text" placeholder="mm-dd-yyyy" value="{{user.geboortedatum}}">
-                        <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
-                    </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="input-group">
-                        <div id="radioBtn" class="btn-group">
-                            <a class="btn btn-default" data-toggle="geslacht" data-title="M">M</a>
-                            <a class="btn btn-default" data-toggle="geslacht" data-title="V">V</a>
-                        </div>
-                        <input id="geslacht" name="geslacht" value="O" type="hidden">
-                    </div>
-                </div>
-            </div>
-            <script>$('#geboortedatum').datepicker({language: "nl"});</script>
-        </div>
-        <div class="form-group">
-            <div class="row">
-                <div class="col-sm-3"><label class="control-label col-md-12" for="kleding_maat">kleding_maat</label></div>
-                <div class="col-sm-8">
-                    <div class="input-group">
-                        <div id="radioBtn" class="btn-group">
-                            <a class="btn btn-default" data-toggle="kleding_maat" data-title="XS">XS</a>
-                            <a class="btn btn-default" data-toggle="kleding_maat" data-title="S">S</a>
-                            <a class="btn btn-default" data-toggle="kleding_maat" data-title="M">M</a>
-                            <a class="btn btn-default" data-toggle="kleding_maat" data-title="L">L</a>
-                            <a class="btn btn-default" data-toggle="kleding_maat" data-title="XL">XL</a>
-                            <a class="btn btn-default" data-toggle="kleding_maat" data-title="XXL">XXL</a>
-                            <a class="btn btn-default" data-toggle="kleding_maat" data-title="XXXL">XXXL</a>
-                        </div>
-                        <input id="kleding_maat" name="kleding_maat" value="O" type="hidden">
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="row">
-                <div class="col-sm-3"><label class="control-label col-md-12" for="dieten">speciale diëten</label></div>
-                <div class="col-sm-8"><textarea class="form-control" rows="4" name="dieten" id="dieten"></textarea></div>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="row">
-                <div class="col-sm-3"><label class="control-label col-md-12" for="submit"></label></div>
-                <div class="col-md-8">
-                    <button type="submit" class="btn btn-primary pull-right" id="submit">Opslaan</button></div>
-            </div>
-        </div>
-    </form>
-{% endblock container %}
+      </form>
+    </div>
+
+    <div class="row">
+      <div class="twelve columns">
+        <ul>
+        {% for task in tasks %}
+          {% if task.completed %}
+            <li>
+              <span class="completed">{{ task.description }}</span>
+              <form class="inline" action="/todo/{{task.id}}" method="post">
+                <input type="hidden" name="_method" value="put" />
+                <button class="small" type="submit">undo</button>
+              </form>
+              <form class="inline" action="/todo/{{task.id}}" method="post">
+                <input type="hidden" name="_method" value="delete" />
+                <button class="primary small" type="submit">delete</button>
+              </form>
+            </li>
+          {% else %}
+            <li>
+              <form class="link" action="/todo/{{task.id}}" method="post">
+                <input type="hidden" name="_method" value="put" />
+                <button class="link" type="submit">{{ task.description }}</button>
+              </form>
+            </li>
+          {% endif %}
+        {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

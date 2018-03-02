@@ -6,7 +6,6 @@ use rocket::response::{Redirect, Flash};
 use rocket::http::{Cookie, Cookies};
 use rocket_contrib::Template;
 use db;
-use f_db;
 
 #[derive(FromForm)]
 struct Login {
@@ -31,7 +30,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for UserId {
 
 #[post("/", data = "<login>")]
 fn login(mut cookies: Cookies, login: Form<Login>, conn: db::Conn) -> Flash<Redirect> {
-    match f_db::check_user(&conn, &login.get().username, &login.get().password) {
+    match db::User::login(&conn, &login.get().username, &login.get().password) {
         Some(user) => {
             cookies.add_private(Cookie::new("user_id", user.id.to_string()));
             Flash::success(Redirect::to("/"), "Successfully logged in.")

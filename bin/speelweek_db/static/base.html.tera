@@ -5,15 +5,15 @@
     <meta charset="utf-8"></meta>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"></meta>
     <meta http-equiv="x-ua-compatible" content="IE=edge"></meta>
-    <link rel="stylesheet" href="/css/bootstrap.css"></link>
+    <link rel="stylesheet" href="/lib/bootstrap/css/bootstrap.min.css"></link>
     <link rel="stylesheet" href="/css/checkboxes.css"></link>
-    <link rel="stylesheet" href="/bootstrap/datepicker/css/bootstrap-datepicker3.min.css"></link>
-    <link rel="stylesheet" href="/bootstrap/validator/css/bootstrapValidator.min.css"></link>
+    <link rel="stylesheet" href="/lib/bootstrap-datepicker/css/bootstrap-datepicker3.min.css"></link>
+    <!-- link rel="stylesheet" href="/lib/bootstrap-datepicker/css/bootstrapValidator.min.css"></link -->
     <script src="/js/jquery-3.1.1.min.js"></script>
     <!-- script src="/jQuery/jquery.serialize-object.min.js"></script -->
     <!-- script src="/jQuery/form/jquery.form.min.js"></script -->
-    <script src="/bootstrap/datepicker/js/bootstrap-datepicker.min.js"></script>
-    <script src="/bootstrap/datepicker/locales/bootstrap-datepicker.nl.min.js" charset="utf-8"></script>
+    <script src="/lib/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script src="/lib/bootstrap-datepicker/locales/bootstrap-datepicker.nl.min.js" charset="utf-8"></script>
     <!-- script src="/bootstrap/validator/js/bootstrapValidator.min.js"></script -->
 </head>
 <body>
@@ -22,7 +22,7 @@
         <div class="navbar-header"><a class="navbar-brand" href="#">FANTA-online</a></div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li><a href="/vrijwilliger">Mijn gegevens</a></li>
+                <li><a href="/user">Mijn gegevens</a></li>
                 <li><a href="/2017">2017</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
@@ -34,7 +34,7 @@
 <div class="container">
     {% block container %}{% endblock container %}
 </div>
-<script src="/js/bootstrap.min.js"></script>
+<script src="/lib/bootstrap/js/bootstrap.min.js"></script>
 <script src="/js/main.js"></script>
 </body>
 </html>

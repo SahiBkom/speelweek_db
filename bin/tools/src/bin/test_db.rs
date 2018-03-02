@@ -7,7 +7,7 @@ extern crate serde_json;
 
 use db::*;
 use diesel::MysqlConnection;
-use db::models::User;
+use db::user::User;
 use diesel::prelude::*;
 
 fn main() {

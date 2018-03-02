@@ -4,7 +4,37 @@ use diesel::MysqlConnection;
 use chrono::{NaiveDate, NaiveDateTime, Utc};
 use schema::user;
 use schema::user::dsl::{user as dsl_user};
+use djangohashers::{make_password, check_password};
 
+#[derive(Serialize, Debug, Clone, Copy)]
+pub enum Role {
+    Vrijwileger,
+    Ouder,
+    AdminRead,
+    AdminWrite
+}
+
+
+impl Role {
+
+    fn id(self) -> u32 {
+        match self {
+            Role::Vrijwileger => 1,
+            Role::Ouder => 2,
+            Role::AdminRead => 3,
+            Role::AdminWrite => 4,
+        }
+    }
+
+    fn mask(self) -> u64 {
+        1u64 >> self.id()
+    }
+
+    pub fn is_check(self, set: u64) -> bool {
+        set & self.mask() == self.mask()
+    }
+
+}
 
 
 #[table_name="user"]
@@ -92,5 +122,51 @@ impl User {
 
     pub fn delete_with_id(id: i64, conn: &MysqlConnection) -> bool {
         diesel::delete(dsl_user.find(id)).execute(conn).is_ok()
+    }
+
+
+    pub fn create(conn: &MysqlConnection, username: &str, password: &str) -> Self {
+        use schema::user::dsl::{id, user};
+
+
+        let new_user = NewUser {
+            username: Some(username.to_string()),
+            password: Some(make_password(password)),
+        };
+
+        diesel::insert_into(user)
+            .values(&new_user)
+            .execute(conn)
+            .expect("Error saving new post");
+
+        user.order(id.desc()).first(conn).unwrap()
+    }
+
+
+    pub fn login(conn: &MysqlConnection, username_email_tel: &str, password_in: &str) -> Option<Self> {
+        use schema::user::dsl::*;
+
+        let results = user
+            .filter(username.eq(username_email_tel))
+            .or_filter(e_mail_adres.eq(username_email_tel))
+            .or_filter(mobiele_nummer.eq(username_email_tel))
+            .limit(5)
+            .load::<User>(conn)
+            .expect("Error loading posts");
+
+
+        for r in results {
+            match check_password(password_in, &r.password.clone().unwrap_or("".to_string())) {
+                Ok(valid) => {
+                    User::update_login_time(conn, r.id);
+                    return Some(r);
+                },
+                Err(error) => {
+//                error!("Error on check password, {}", error);
+                }
+            }
+        }
+        // Ask the user to try again.
+        None
     }
 }

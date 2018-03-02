@@ -9,8 +9,10 @@ extern crate chrono;
 extern crate djangohashers;
 #[macro_use] extern crate serde_derive;
 
+extern crate rocket;
+
 pub mod schema;
-pub mod models;
+pub mod user;
 pub mod task;
 
 use diesel::prelude::*;
@@ -18,10 +20,23 @@ use dotenv::dotenv;
 use std::env;
 use chrono::{Utc, NaiveDateTime};
 use djangohashers::{check_password, make_password, Algorithm};
-use models::NewUser;
+use user::NewUser;
 use diesel::prelude::*;
 
-pub use models::User;
+use std::ops::Deref;
+
+use diesel::MysqlConnection;
+use diesel::r2d2::{ConnectionManager, Pool, PooledConnection};
+
+
+use rocket::http::Status;
+use rocket::request::{self, FromRequest};
+use rocket::{Request, State, Outcome};
+
+
+
+
+pub use user::User;
 
 pub fn establish_connection() -> MysqlConnection {
     dotenv().ok();
@@ -34,47 +49,37 @@ pub fn database_url() -> String {
     env::var("DATABASE_URL").expect("DATABASE_URL must be set")
 }
 
-pub fn create_user(conn: &MysqlConnection, username: &str, password: &str) -> User {
-    use schema::user::dsl::{id, user};
+pub type SqlitePool = Pool<ConnectionManager<MysqlConnection>>;
 
 
-    let new_user = NewUser {
-        username: Some(username.to_string()),
-        password: Some(make_password(password)),
-    };
+//pub fn database_url() -> String {
+//    env::var("DATABASE_URL").expect("DATABASE_URL must be set")
+//}
 
-    diesel::insert_into(user)
-        .values(&new_user)
-        .execute(conn)
-        .expect("Error saving new post");
-
-    user.order(id.desc()).first(conn).unwrap()
+pub fn init_pool() -> SqlitePool {
+    let manager = ConnectionManager::<MysqlConnection>::new(database_url());
+    Pool::new(manager).expect("db pool")
 }
 
+pub struct Conn(pub PooledConnection<ConnectionManager<MysqlConnection>>);
 
-pub fn check_user(conn: &MysqlConnection, username_email_tel: &str, password_in: &str) -> Option<User> {
-    use schema::user::dsl::*;
+impl Deref for Conn {
+    type Target = MysqlConnection;
 
-    let results = user
-        .filter(username.eq(username_email_tel))
-        .or_filter(e_mail_adres.eq(username_email_tel))
-        .or_filter(mobiele_nummer.eq(username_email_tel))
-        .limit(5)
-        .load::<User>(conn)
-        .expect("Error loading posts");
+    #[inline(always)]
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
 
+impl<'a, 'r> FromRequest<'a, 'r> for Conn {
+    type Error = ();
 
-    for r in results {
-        match check_password(password_in, &r.password.clone().unwrap_or("".to_string())) {
-            Ok(valid) => {
-                User::update_login_time(conn, r.id);
-                return Some(r);
-            },
-            Err(error) => {
-//                error!("Error on check password, {}", error);
-            }
+    fn from_request(request: &'a Request<'r>) -> request::Outcome<Conn, ()> {
+        let pool = request.guard::<State<SqlitePool>>()?;
+        match pool.get() {
+            Ok(conn) => Outcome::Success(Conn(conn)),
+            Err(_) => Outcome::Failure((Status::ServiceUnavailable, ()))
         }
     }
-    // Ask the user to try again.
-    None
 }
