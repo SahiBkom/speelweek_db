@@ -14,6 +14,7 @@ extern crate db as f_db;
 mod static_files;
 mod login;
 mod db;
+mod page;
 #[cfg(test)] mod tests;
 
 use rocket::Rocket;
@@ -22,6 +23,8 @@ use rocket::response::{Flash, Redirect};
 use rocket_contrib::Template;
 use dotenv::dotenv;
 use f_db::task::Task;
+use page::user_page;
+
 
 #[derive(FromForm)]
 pub struct Todo {
@@ -30,20 +33,20 @@ pub struct Todo {
 
 
 #[derive(Debug, Serialize)]
-struct Context<'a, 'b>{ msg: Option<(&'a str, &'b str)>, tasks: Vec<Task> }
+struct ContextMsg<'a, 'b>{ msg: Option<(&'a str, &'b str)>, tasks: Vec<Task> }
 
-impl<'a, 'b> Context<'a, 'b> {
-    pub fn err(conn: &db::Conn, msg: &'a str) -> Context<'static, 'a> {
-        Context{msg: Some(("error", msg)), tasks: Task::all(conn)}
+impl<'a, 'b> ContextMsg<'a, 'b> {
+    pub fn err(conn: &db::Conn, msg: &'a str) -> ContextMsg<'static, 'a> {
+        ContextMsg {msg: Some(("error", msg)), tasks: Task::all(conn)}
     }
 
-    pub fn raw(conn: &db::Conn, msg: Option<(&'a str, &'b str)>) -> Context<'a, 'b> {
-        Context{msg: msg, tasks: Task::all(conn)}
+    pub fn raw(conn: &db::Conn, msg: Option<(&'a str, &'b str)>) -> ContextMsg<'a, 'b> {
+        ContextMsg {msg: msg, tasks: Task::all(conn)}
     }
 }
 
 #[post("/", data = "<todo_form>")]
-fn new(todo_form: Form<Todo>, conn: db::Conn, user: login::User) -> Flash<Redirect> {
+fn new(todo_form: Form<Todo>, conn: db::Conn, user: login::UserId) -> Flash<Redirect> {
     let todo = todo_form.into_inner();
     if todo.description.is_empty() {
         Flash::error(Redirect::to("/"), "Description cannot be empty.")
@@ -55,28 +58,46 @@ fn new(todo_form: Form<Todo>, conn: db::Conn, user: login::User) -> Flash<Redire
 }
 
 #[put("/<id>")]
-fn toggle(id: i32, conn: db::Conn, user: login::User) -> Result<Redirect, Template> {
+fn toggle(id: i32, conn: db::Conn, user: login::UserId) -> Result<Redirect, Template> {
     if Task::toggle_with_id(id, &conn) {
         Ok(Redirect::to("/"))
     } else {
-        Err(Template::render("index", &Context::err(&conn, "Couldn't toggle task.")))
+        Err(Template::render("index", &ContextMsg::err(&conn, "Couldn't toggle task.")))
     }
 }
 
 #[delete("/<id>")]
-fn delete(id: i32, conn: db::Conn, user: login::User) -> Result<Flash<Redirect>, Template> {
+fn delete(id: i32, conn: db::Conn, user: login::UserId) -> Result<Flash<Redirect>, Template> {
     if Task::delete_with_id(id, &conn) {
         Ok(Flash::success(Redirect::to("/"), "Todo was deleted."))
     } else {
-        Err(Template::render("index", &Context::err(&conn, "Couldn't delete task.")))
+        Err(Template::render("index", &ContextMsg::err(&conn, "Couldn't delete task.")))
     }
 }
 
-#[get("/")]
-fn index(msg: Option<FlashMessage>, conn: db::Conn, user: login::User) -> Template {
+#[get("/", rank = 1)]
+fn test(conn: db::Conn, user: login::UserId) -> Template {
+
+    #[derive(Debug, Serialize)]
+    struct UserPageDate {
+        user: f_db::User,
+    }
+
+    println!("test {:?}", user);
+    let t = f_db::User::get_by_id(&conn,user.0 as i64);
+
+    let data = UserPageDate { user : t,};
+
+    println!("test {:?}", data);
+    Template::render("index", data)
+}
+
+#[get("/", rank = 2)]
+fn index(msg: Option<FlashMessage>, conn: db::Conn, user: login::UserId) -> Template {
+    println!("test 3");
     Template::render("index", &match msg {
-        Some(ref msg) => Context::raw(&conn, Some((msg.name(), msg.msg()))),
-        None => Context::raw(&conn, None),
+        Some(ref msg) => ContextMsg::raw(&conn, Some((msg.name(), msg.msg()))),
+        None => ContextMsg::raw(&conn, None),
     })
 }
 
@@ -91,9 +112,10 @@ fn rocket() -> (Rocket, Option<db::Conn>) {
 
     let rocket = rocket::ignite()
         .manage(pool)
-        .mount("/", routes![index, static_files::all, ])
+        .mount("/", routes![index, static_files::all, test,])
         .mount("/todo/", routes![new, toggle, delete])
         .mount("/login/", routes![login::index, login::user_index, login::login, login::logout, login::login_user, login::login_page])
+        .mount("/user/", routes![page::user_page::save])
         .attach(Template::fairing());
 
     (rocket, conn)

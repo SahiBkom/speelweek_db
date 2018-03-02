@@ -18,8 +18,10 @@ use dotenv::dotenv;
 use std::env;
 use chrono::{Utc, NaiveDateTime};
 use djangohashers::{check_password, make_password, Algorithm};
-use models::{NewUser, User};
+use models::NewUser;
 use diesel::prelude::*;
+
+pub use models::User;
 
 pub fn establish_connection() -> MysqlConnection {
     dotenv().ok();
@@ -65,10 +67,9 @@ pub fn check_user(conn: &MysqlConnection, username_email_tel: &str, password_in:
     for r in results {
         match check_password(password_in, &r.password.clone().unwrap_or("".to_string())) {
             Ok(valid) => {
-                if valid {
-                    return Some(r);
-                }
-            }
+                User::update_login_time(conn, r.id);
+                return Some(r);
+            },
             Err(error) => {
 //                error!("Error on check password, {}", error);
             }

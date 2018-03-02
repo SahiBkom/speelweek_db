@@ -137,8 +137,7 @@ fn test_bad_form_submissions() {
             .header(ContentType::Form)
             .body("evil=smile")
             .dispatch();
-
-        let mut cookies = res.headers().get("Set-Cookie");
+      let mut cookies = res.headers().get("Set-Cookie");
         assert_eq!(res.status(), Status::UnprocessableEntity);
         assert!(!cookies.any(|value| value.contains("error")));
     })

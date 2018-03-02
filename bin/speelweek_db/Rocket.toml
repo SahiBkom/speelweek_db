@@ -1,3 +1,6 @@
 [global]
 template_dir = "static"
 port = 8080
+log = "normal"
+# use: openssl rand -base64 32.
+secret_key = "HfjJ43JpG/EEc+MXeBLJz/6Elac7uQBGlRYGnetVDLY="
