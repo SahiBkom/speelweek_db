@@ -22,7 +22,7 @@ table! {
     team_vrijwilliger (id) {
         id -> Integer,
         team_id -> Integer,
-        vrijwilliger_id -> Integer,
+        user_id -> Integer,
         programma -> Bool,
         voorbereiding -> Bool,
         created_at -> Datetime,

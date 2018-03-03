@@ -1,8 +1,8 @@
-use rocket::response::Redirect;
+
 use rocket::request::{Form, FromFormValue};
 use rocket::http::RawStr;
 use rocket_contrib::Template;
-use login;
+
 use db;
 
 use chrono::NaiveDate;
@@ -52,7 +52,7 @@ impl<'v> FromFormValue<'v> for FromBool {
 
     fn from_form_value(v: &'v RawStr) -> Result<Self, Self::Error> {
         let variant = match v.as_str() {
-            "Ja" | "Ja" | "True" | "true" | "On" | "on" => FromBool::True,
+            "Ja" | "ja" | "True" | "true" | "On" | "on" => FromBool::True,
             "Nee" | "nee" | "False" | "false" | "Off" | "off" => FromBool::False,
             _ => return Err(v)
         };

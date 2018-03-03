@@ -12,7 +12,6 @@ extern crate dotenv;
 extern crate db;
 
 mod static_files;
-mod login;
 mod page;
 #[cfg(test)] mod tests;
 
@@ -22,8 +21,6 @@ use rocket::response::{Flash, Redirect};
 use rocket_contrib::Template;
 use dotenv::dotenv;
 use db::task::Task;
-use page::user_page;
-use db::User;
 
 #[derive(FromForm)]
 pub struct Todo {
@@ -97,7 +94,8 @@ fn rocket() -> (Rocket, Option<db::Conn>) {
         .manage(pool)
         .mount("/", routes![index, static_files::all])
         .mount("/todo/", routes![new, toggle, delete])
-        .mount("/login/", routes![login::index, login::user_index, login::login, login::logout, login::login_user, login::login_page])
+        .mount("/login/", routes![page::login::index, page::login::user_index,
+            page::login::login, page::login::logout, page::login::login_user, page::login::login_page])
         .mount("/user/", routes![page::user_page::save, page::user_page::index])
         .mount("/vrijwilliger/", routes![page::vrijwilliger_page::index, ])
         .attach(Template::fairing());

@@ -38,6 +38,8 @@ use chrono::{NaiveDate, NaiveDateTime, Utc};
 //use rocket::request::{self, Form, FromFormValue, FromRequest, Request};
 //use rocket::response::Redirect;
 
+use user::UserId;
+
 use schema::team;
 use schema::team::dsl::{team as dsl_team};
 
@@ -90,12 +92,23 @@ impl Team {
 
 #[table_name="team_vrijwilliger"]
 #[derive(Serialize, Queryable, Insertable, Debug, Clone, AsChangeset)] //
-struct TeamVrijwilliger {
+pub struct TeamVrijwilliger {
     pub id: i32,
     pub team_id: i32,
-    pub vrijwilliger_id: i32,
+    pub user_id: i32,
     pub programma: bool,
     pub voorbereiding: bool,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
+}
+
+
+impl TeamVrijwilliger {
+
+    pub fn all_user(conn: &MysqlConnection, userId: UserId) -> Vec<TeamVrijwilliger> {
+        dsl_team_vrijwilliger
+            .filter(team_vrijwilliger::user_id.eq(userId.id()))
+            .order(team_vrijwilliger::id.desc())
+            .load::<TeamVrijwilliger>(conn).unwrap()
+    }
 }

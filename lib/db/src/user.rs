@@ -14,6 +14,12 @@ use schema::user;
 #[derive(Serialize, Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone)]
 pub struct UserId(i32);
 
+impl UserId {
+    pub fn id(self) -> i32 {
+        self.0
+    }
+}
+
 impl<'a, 'r> FromRequest<'a, 'r> for UserId {
     type Error = ();
 

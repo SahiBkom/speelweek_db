@@ -45,16 +45,18 @@ CREATE TABLE `team` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8
 
 CREATE TABLE `team_vrijwilliger` (
-  `id` bigint(20) NOT NULL,
-  `team_id` bigint(20) NOT NULL,
-  `vrijwilliger_id` bigint(20) NOT NULL,
+  `id` int(10) unsigned NOT NULL,
+  `team_id` int(10) unsigned NOT NULL,
+  `user_id` int(10) unsigned NOT NULL,
   `programma` tinyint(1) NOT NULL DEFAULT '0',
   `voorbereiding` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `ix_team_vrijwilliger_team_id` (`team_id`),
-  KEY `ix_team_vrijwilliger_vrijwilliger_id` (`vrijwilliger_id`)
+  KEY `ix_team_vrijwilliger_vrijwilliger_id` (`user_id`),
+  CONSTRAINT `team_vrijwilliger_team_FK` FOREIGN KEY (`id`) REFERENCES `team` (`id`),
+  CONSTRAINT `team_vrijwilliger_user_FK` FOREIGN KEY (`id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8
 
 
