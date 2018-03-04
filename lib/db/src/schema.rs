@@ -1,11 +1,42 @@
 table! {
-    tasks {
-        id -> Nullable<Integer>,
-        description -> Text,
-        completed -> Bool,
-
+    addresses (id) {
+        id -> Integer,
+        address -> Varchar,
+        city -> Varchar,
+        state -> Varchar,
+        zip -> Varchar,
     }
 }
+
+table! {
+    emailtemplate (id) {
+        id -> Integer,
+        tag -> Varchar,
+        subject -> Varchar,
+        text -> Longtext,
+        created_at -> Timestamp,
+        updated_at -> Timestamp,
+    }
+}
+
+table! {
+    property (id) {
+        id -> Integer,
+        tag -> Varchar,
+        value -> Longtext,
+        created_at -> Timestamp,
+        updated_at -> Timestamp,
+    }
+}
+
+table! {
+    tasks (id) {
+        id -> Integer,
+        description -> Varchar,
+        completed -> Bool,
+    }
+}
+
 table! {
     team (id) {
         id -> Integer,
@@ -56,7 +87,13 @@ table! {
     }
 }
 
+joinable!(team_vrijwilliger -> team (id));
+joinable!(team_vrijwilliger -> user (id));
+
 allow_tables_to_appear_in_same_query!(
+    addresses,
+    emailtemplate,
+    property,
     tasks,
     team,
     team_vrijwilliger,

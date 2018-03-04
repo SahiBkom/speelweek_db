@@ -5,7 +5,8 @@
 members = [
     "bin/speelweek_db",
     "bin/tools",
-    "lib/db"
+    "lib/db",
+    "lib/mail"
 ]
 
 [profile.release]

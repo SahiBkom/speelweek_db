@@ -20,7 +20,6 @@ use rocket::request::{Form, FlashMessage};
 use rocket::response::{Flash, Redirect};
 use rocket_contrib::Template;
 use dotenv::dotenv;
-use db::task::Task;
 
 #[derive(FromForm)]
 pub struct Todo {
@@ -28,57 +27,10 @@ pub struct Todo {
 }
 
 
-#[derive(Debug, Serialize)]
-struct ContextMsg<'a, 'b>{ msg: Option<(&'a str, &'b str)>, tasks: Vec<Task> }
-
-impl<'a, 'b> ContextMsg<'a, 'b> {
-    pub fn err(conn: &db::Conn, msg: &'a str) -> ContextMsg<'static, 'a> {
-        ContextMsg {msg: Some(("error", msg)), tasks: Task::all(conn)}
-    }
-
-    pub fn raw(conn: &db::Conn, msg: Option<(&'a str, &'b str)>) -> ContextMsg<'a, 'b> {
-        ContextMsg {msg: msg, tasks: Task::all(conn)}
-    }
-}
-
-#[post("/", data = "<todo_form>")]
-fn new(todo_form: Form<Todo>, conn: db::Conn, user: db::user::UserId) -> Flash<Redirect> {
-    let todo = todo_form.into_inner();
-    if todo.description.is_empty() {
-        Flash::error(Redirect::to("/"), "Description cannot be empty.")
-    } else if Task::insert(todo.description, &conn) {
-        Flash::success(Redirect::to("/"), "Todo successfully added.")
-    } else {
-        Flash::error(Redirect::to("/"), "Whoops! The server failed.")
-    }
-}
-
-#[put("/<id>")]
-fn toggle(id: i32, conn: db::Conn, user: db::user::UserId) -> Result<Redirect, Template> {
-    if Task::toggle_with_id(id, &conn) {
-        Ok(Redirect::to("/"))
-    } else {
-        Err(Template::render("index", &ContextMsg::err(&conn, "Couldn't toggle task.")))
-    }
-}
-
-#[delete("/<id>")]
-fn delete(id: i32, conn: db::Conn, user: db::user::UserId) -> Result<Flash<Redirect>, Template> {
-    if Task::delete_with_id(id, &conn) {
-        Ok(Flash::success(Redirect::to("/"), "Todo was deleted."))
-    } else {
-        Err(Template::render("index", &ContextMsg::err(&conn, "Couldn't delete task.")))
-    }
-}
-
-
 #[get("/", rank = 2)]
-fn index(msg: Option<FlashMessage>, conn: db::Conn, user: db::user::UserId) -> Template {
+fn index(conn: db::Conn, user: db::user::UserId) -> Template {
     println!("test 3");
-    Template::render("index", &match msg {
-        Some(ref msg) => ContextMsg::raw(&conn, Some((msg.name(), msg.msg()))),
-        None => ContextMsg::raw(&conn, None),
-    })
+    Template::render("index", user)
 }
 
 
@@ -93,7 +45,6 @@ fn rocket() -> (Rocket, Option<db::Conn>) {
     let rocket = rocket::ignite()
         .manage(pool)
         .mount("/", routes![index, static_files::all])
-        .mount("/todo/", routes![new, toggle, delete])
         .mount("/login/", routes![page::login::index, page::login::user_index,
             page::login::login, page::login::logout, page::login::login_user, page::login::login_page])
         .mount("/user/", routes![page::user_page::save, page::user_page::index])

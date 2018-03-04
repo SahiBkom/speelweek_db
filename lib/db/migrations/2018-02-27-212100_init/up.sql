@@ -1,10 +1,10 @@
 -- Your SQL goes here
 
 CREATE TABLE `user` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(255) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
-  `last_login` datetime DEFAULT NULL,
+  `login_at` datetime DEFAULT NULL,
   `voorletters` varchar(255) DEFAULT NULL,
   `voornaam` varchar(255) DEFAULT NULL,
   `tussenvoegsel` varchar(255) DEFAULT NULL,
@@ -18,40 +18,40 @@ CREATE TABLE `user` (
   `mobiele_nummer` varchar(255) DEFAULT NULL,
   `e_mail_adres` varchar(255) DEFAULT NULL,
   `e_mail_toestemming` tinyint(1) DEFAULT '0',
-  `role` bigint(20) DEFAULT NULL,
+  `role` bigint(20) unsigned DEFAULT NULL,
   `geboortedatum` date DEFAULT NULL,
-  `when_created` datetime NOT NULL,
-  `when_updated` datetime NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_user_username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8
 
+-- remove
 CREATE TABLE `tasks` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) DEFAULT NULL,
   `description` varchar(256) DEFAULT NULL,
   `completed` tinyint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8
 
 CREATE TABLE `team` (
-  `id` bigint(20) NOT NULL,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `naam` varchar(255) NOT NULL,
   `omschrijving` varchar(255) NOT NULL,
   `voorbereiding` tinyint(1) NOT NULL DEFAULT '0',
   `middagprogramma` tinyint(1) NOT NULL DEFAULT '0',
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8
 
 CREATE TABLE `team_vrijwilliger` (
-  `id` int(10) unsigned NOT NULL,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `team_id` int(10) unsigned NOT NULL,
   `user_id` int(10) unsigned NOT NULL,
   `programma` tinyint(1) NOT NULL DEFAULT '0',
   `voorbereiding` tinyint(1) NOT NULL DEFAULT '0',
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `ix_team_vrijwilliger_team_id` (`team_id`),
   KEY `ix_team_vrijwilliger_vrijwilliger_id` (`user_id`),
@@ -99,3 +99,25 @@ INSERT INTO `team` (`id`, `naam`, `omschrijving`, `voorbereiding`, `middagprogra
 (36, 'veiligheid', '', 1, 0, '2017-05-22 19:17:45', '2017-05-22 19:17:45'),
 (37, 'vrijwilligers', '', 0, 0, '2017-05-22 19:17:45', '2017-05-22 19:17:45'),
 (38, 'water & fun', '(waterprogramma / springkussens / trampolines)', 1, 1, '2017-05-22 19:17:45', '2017-05-22 19:17:45');
+
+
+CREATE TABLE `property` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `tag` varchar(255) NOT NULL,
+  `value` longtext NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_tag` (`tag`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+
+CREATE TABLE `emailtemplate` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `tag` varchar(255) NOT NULL,
+  `subject` varchar(255) NOT NULL,
+  `text` longtext NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_tag` (`tag`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8

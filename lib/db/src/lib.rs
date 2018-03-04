@@ -13,8 +13,10 @@ extern crate rocket;
 
 pub mod schema;
 pub mod user;
-pub mod task;
 pub mod team;
+pub mod property;
+pub mod e_mail_template;
+
 
 use diesel::prelude::*;
 use dotenv::dotenv;
@@ -34,10 +36,10 @@ use rocket::http::Status;
 use rocket::request::{self, FromRequest};
 use rocket::{Request, State, Outcome};
 
-
-
-
 pub use user::User;
+pub use property::Property;
+pub use e_mail_template::EmailTemplate;
+
 
 pub fn establish_connection() -> MysqlConnection {
     dotenv().ok();

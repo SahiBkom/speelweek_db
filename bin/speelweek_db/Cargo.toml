@@ -15,6 +15,7 @@ diesel_infer_schema = { version = "1.1", features = ["mysql"] }
 dotenv = "0.10"
 chrono = { version = "0.4.0", features = ["serde"] } # Date and time handling
 db = {path = "../../lib/db"}
+mail = {path = "../../lib/mail"}
 
 [dev-dependencies]
 parking_lot = {version = "0.5", features = ["nightly"]}

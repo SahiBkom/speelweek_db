@@ -1,0 +1,11 @@
+[package]
+name = "mail"
+version = "0.1.0"
+authors = ["Johan Govers <johan@otherweb.eu>"]
+workspace = "../../"
+
+[dependencies]
+lettre = "0.7"
+lettre_email = "0.7.0"
+mime = "0.3.5"
+db = {path = "../../lib/db"}
